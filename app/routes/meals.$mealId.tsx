@@ -40,6 +40,7 @@ export default function MealDetailsPage() {
     <div>
       <h3 className="text-2xl font-bold">{data.meal.name}</h3>
       <hr className="my-4" />
+      <p className="py-6">{data.meal.description}</p>
       <Form method="post">
         <button
           type="submit"

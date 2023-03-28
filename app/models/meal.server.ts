@@ -11,7 +11,7 @@ export function getMeal({
   userId: User["id"];
 }) {
   return prisma.meal.findFirst({
-    select: { id: true, name: true },
+    select: { id: true, name: true, description: true },
     where: { id, userId },
   });
 }
@@ -50,13 +50,15 @@ export async function getRandomMeals({
 
 export function createMeal({
   name,
+  description,
   userId,
-}: Pick<Meal, "name"> & {
+}: Pick<Meal, "name" | "description"> & {
   userId: User["id"];
 }) {
   return prisma.meal.create({
     data: {
       name,
+      description,
       user: {
         connect: {
           id: userId,
