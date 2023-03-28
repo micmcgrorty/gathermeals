@@ -6,8 +6,6 @@ import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getMealListItems } from "~/models/meal.server";
 
-import type { Meal } from "~/models/meal.server";
-
 export const meta: V2_MetaFunction = () => [{ title: "GatherMeals" }];
 
 export async function loader({ request }: LoaderArgs) {
@@ -52,7 +50,7 @@ export default function NotesPage() {
             <p className="p-4">No meals yet</p>
           ) : (
             <ol>
-              {data?.meals.map((meal: Meal) => (
+              {data?.meals.map((meal: any) => (
                 <li key={meal.id}>
                   <NavLink
                     className={({ isActive }) =>

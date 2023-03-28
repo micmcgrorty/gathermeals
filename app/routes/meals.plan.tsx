@@ -22,7 +22,7 @@ export default function MealPlanPage() {
     <div>
       <h3 className="text-2xl font-bold">Here are your meals for the week!</h3>
       <hr className="my-4" />
-      {data.meals.map((meal: Meal) => {
+      {data.meals.map((meal: any) => {
         return <p key={meal.id}>{meal.name}</p>;
       })}
     </div>
