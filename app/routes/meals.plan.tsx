@@ -5,8 +5,6 @@ import { useLoaderData } from "@remix-run/react";
 import { getRandomMeals } from "~/models/meal.server";
 import { requireUserId } from "~/session.server";
 
-import type { Meal } from "~/models/meal.server";
-
 export const meta: V2_MetaFunction = () => [{ title: "Weekly Meal Plan" }];
 
 export async function loader({ request }: LoaderArgs) {
