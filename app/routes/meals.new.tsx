@@ -17,7 +17,14 @@ export async function action({ request }: ActionArgs) {
 
   if (typeof name !== "string" || name.length === 0) {
     return json(
-      { errors: { name: "Name is required", body: null } },
+      { errors: { name: "Name is required", recipe: null } },
+      { status: 400 }
+    );
+  }
+
+  if (typeof recipe !== "string" || recipe.length === 0) {
+    return json(
+      { errors: { recipe: "Recipe is required", name: null } },
       { status: 400 }
     );
   }
@@ -30,10 +37,13 @@ export async function action({ request }: ActionArgs) {
 export default function NewMealPage() {
   const actionData = useActionData<typeof action>();
   const nameRef = React.useRef<HTMLInputElement>(null);
+  const recipeRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (actionData?.errors?.name) {
       nameRef.current?.focus();
+    } else if (actionData?.errors?.recipe) {
+      recipeRef.current?.focus();
     }
   }, [actionData]);
 
@@ -69,12 +79,22 @@ export default function NewMealPage() {
 
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Recipe: </span>
+          <span>Link to recipe: </span>
           <input
+            ref={recipeRef}
             name="recipe"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+            aria-invalid={actionData?.errors?.recipe ? true : undefined}
+            aria-errormessage={
+              actionData?.errors?.recipe ? "recipe-error" : undefined
+            }
           />
         </label>
+        {actionData?.errors?.recipe && (
+          <div className="pt-1 text-red-700" id="title-error">
+            {actionData.errors.recipe}
+          </div>
+        )}
       </div>
 
       <div className="text-right">
