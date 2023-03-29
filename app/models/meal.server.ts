@@ -32,10 +32,6 @@ export async function getRandomMeals({
   userId: User["id"];
   number: number;
 }) {
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
   const randomPick = (values: string[]) => {
     const index = Math.floor(Math.random() * values.length);
     return values[index];
@@ -52,6 +48,15 @@ export async function getRandomMeals({
     orderBy: { [orderBy]: orderDir },
   });
 
+  return meals;
+}
+
+export async function getShoppingList(meals: any) {
+  const configuration = new Configuration({
+    apiKey: process.env.OPENAI_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
+
   const mealRecipeLinks = meals.map((meal: any) => meal.recipe);
 
   const completion = await openai.createCompletion({
@@ -66,7 +71,7 @@ export async function getRandomMeals({
     presence_penalty: 0.0,
   });
 
-  return { meals, shoppingList: completion.data.choices[0].text?.split(", ") };
+  return { shoppingList: completion.data.choices[0].text?.split(", ") };
 }
 
 export function createMeal({

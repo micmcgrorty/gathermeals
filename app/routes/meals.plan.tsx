@@ -1,20 +1,22 @@
+import { Suspense } from "react";
 import type { LoaderArgs, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { defer } from "@remix-run/node";
+import { Await, useLoaderData } from "@remix-run/react";
 
-import { getRandomMeals } from "~/models/meal.server";
+import { getRandomMeals, getShoppingList } from "~/models/meal.server";
 import { requireUserId } from "~/session.server";
 
 export const meta: V2_MetaFunction = () => [{ title: "Weekly Meal Plan" }];
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
-  const { meals, shoppingList } = await getRandomMeals({ userId, number: 7 });
-  return json({ meals, shoppingList });
+  const meals = await getRandomMeals({ userId, number: 7 });
+  const shoppingListPromise = getShoppingList(meals);
+  return defer({ meals, shoppingListPromise });
 }
 
 export default function MealPlanPage() {
-  const data = useLoaderData<typeof loader>();
+  const { meals, shoppingListPromise } = useLoaderData<typeof loader>();
 
   return (
     <div>
@@ -25,15 +27,19 @@ export default function MealPlanPage() {
       <div className="flex items-start justify-between">
         <div className="w-1/2">
           <h4 className="text-xl font-bold">Meals</h4>
-          {data.meals.map((meal: any) => {
+          {meals?.map((meal: any) => {
             return <p key={meal.id}>{meal.name}</p>;
           })}
         </div>
         <div className="w-1/2">
           <h4 className="text-xl font-bold">Shopping list</h4>
-          {data?.shoppingList?.map((item: any) => {
-            return <p key={item}>{item}</p>;
-          })}
+          <Suspense fallback={<p>Loading your shopping list...</p>}>
+            <Await resolve={shoppingListPromise}>
+              {({ shoppingList }) =>
+                shoppingList?.map((item: any) => <p key={item}>{item}</p>)
+              }
+            </Await>
+          </Suspense>
         </div>
       </div>
     </div>
