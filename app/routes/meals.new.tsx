@@ -13,7 +13,7 @@ export async function action({ request }: ActionArgs) {
 
   const formData = await request.formData();
   const name = formData.get("name");
-  const description = formData.get("description");
+  const recipe = formData.get("recipe");
 
   if (typeof name !== "string" || name.length === 0) {
     return json(
@@ -22,7 +22,7 @@ export async function action({ request }: ActionArgs) {
     );
   }
 
-  const meal = await createMeal({ name, userId, description });
+  const meal = await createMeal({ name, userId, recipe });
 
   return redirect(`/meals/${meal.id}`);
 }
@@ -69,11 +69,10 @@ export default function NewMealPage() {
 
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Description: </span>
-          <textarea
-            name="description"
-            rows={8}
-            className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
+          <span>Recipe: </span>
+          <input
+            name="recipe"
+            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
           />
         </label>
       </div>

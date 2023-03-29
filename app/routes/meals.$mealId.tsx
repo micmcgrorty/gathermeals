@@ -39,8 +39,14 @@ export default function MealDetailsPage() {
   return (
     <div>
       <h3 className="text-2xl font-bold">{data.meal.name}</h3>
+      {data.meal.recipe && (
+        <div className="pt-3">
+          <a target="_blank" rel="noreferrer" href={data.meal.recipe}>
+            Link to recipe
+          </a>
+        </div>
+      )}
       <hr className="my-4" />
-      <p className="py-6">{data.meal.description}</p>
       <Form method="post">
         <button
           type="submit"
@@ -65,7 +71,7 @@ export function ErrorBoundary() {
   }
 
   if (error.status === 404) {
-    return <div>Note not found</div>;
+    return <div>Meal not found</div>;
   }
 
   return <div>An unexpected error occurred: {error.statusText}</div>;

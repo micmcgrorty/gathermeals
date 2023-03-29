@@ -9,8 +9,8 @@ export const meta: V2_MetaFunction = () => [{ title: "Weekly Meal Plan" }];
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
-  const meals = await getRandomMeals({ userId, number: 7 });
-  return json({ meals });
+  const { meals, shoppingList } = await getRandomMeals({ userId, number: 7 });
+  return json({ meals, shoppingList });
 }
 
 export default function MealPlanPage() {
@@ -18,11 +18,24 @@ export default function MealPlanPage() {
 
   return (
     <div>
-      <h3 className="text-2xl font-bold">Here are your meals for the week!</h3>
+      <h3 className="text-2xl font-bold">
+        Here are your meals for the week and a shopping list
+      </h3>
       <hr className="my-4" />
-      {data.meals.map((meal: any) => {
-        return <p key={meal.id}>{meal.name}</p>;
-      })}
+      <div className="flex items-start justify-between">
+        <div className="w-1/2">
+          <h4 className="text-xl font-bold">Meals</h4>
+          {data.meals.map((meal: any) => {
+            return <p key={meal.id}>{meal.name}</p>;
+          })}
+        </div>
+        <div className="w-1/2">
+          <h4 className="text-xl font-bold">Shopping list</h4>
+          {data?.shoppingList?.map((item: any) => {
+            return <p key={item}>{item}</p>;
+          })}
+        </div>
+      </div>
     </div>
   );
 }
